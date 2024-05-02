@@ -13,16 +13,14 @@ const pass = process.env.DB_PASS;
 const db = process.env.DB_NAME;
 const host = process.env.DB_HOST;
 
-
-
 const connection = new Sequelize({
     dialect: "mysql",
-    host:host,
+    host: host,
     username: user,
     password: pass,
     database: db,
     logging: false,
-    port: 33062,
+    port: 3306,
     models: [Division,Departamento,Profesor,CentroInvestigacion,ProfeCentroInvestigacion,Usuario]
 });
 

@@ -7,11 +7,11 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: hola123
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
     ports:
-      - 33062:3306
+      - ${DB_PORT_HOST}:3306
     volumes:
-      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+      - ./database/db.sql:/docker-entrypoint-initdb.d/db.sql
       - mysql-data:/var/lib/mysql
           
   phpmyadmin:
@@ -21,21 +21,31 @@ services:
     environment:
       PMA_HOST: mysql
     ports:
-      - 81:80
+      - ${PHPMYADMIN_PORT_HOST}:80
+    depends_on:
+      - mysql
+
   backend:
-    container_name: "backend-proyecto"
+    container_name: backend-proyecto
     build:
       context: docker
       dockerfile: Dockerfile
-    command: sh -c "npm install && npm run start"
+    command: sh -c "wait-for-it mysql:3306 -t 300 && npm install && npm run start"
     user: 1000:1000
     working_dir: /app
     ports:
-      - 3001:3001
+      - ${PORT}:3001
     depends_on:
-      - mysql-proyecto
+      - mysql
     volumes:
       - .:/app
+    environment:
+      - APP_SECRET=${APP_SECRET}
+      - TOKEN_EXPIRATION=60d
+      - DB_HOST=mysql
+      - DB_NAME=ExpedientesProfesores
+      - DB_USER=root
+      - DB_PASS=${DB_PASS}
 
 volumes:
   mysql-data:
