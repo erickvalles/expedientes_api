@@ -1,9 +1,12 @@
-import {Router} from "express";
-import { crearDepartamento } from "../controllers/departamentosController";
+import express from "express";
+import { crearDepartamento, actualizarDepartamento, listarDepartamentos, eliminarDepartamento, exportarDepartamentos } from "../controllers/departamentosController";
 
-const departamentoRouter = Router();
+const router = express.Router();
 
-departamentoRouter.post('/',crearDepartamento);
+router.post("/departamentos", crearDepartamento);
+router.put("/departamentos/:id", actualizarDepartamento);
+router.get("/departamentos", listarDepartamentos);
+router.delete("/departamentos/:id", eliminarDepartamento);
+router.get("/departamentos/exportar", exportarDepartamentos);
 
-
-export default departamentoRouter;
+export default router;
